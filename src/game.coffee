@@ -25,16 +25,17 @@ $ ->
 	currentTime = new Date()
 	previousTime = currentTime
 
-	aisle = new ame.aisle.Aisle
+	aThing = new ame.aisle.Aisle
+	aThing = new ame.aisle.Editor
 
 	setInterval ->
 		currentTime = new Date()
 		delta = (currentTime - previousTime) * 0.001
 
-		aisle.update delta
+		aThing.update delta
 
 		gfx.clear()
-		aisle.draw gfx
+		aThing.draw gfx
 
 		previousTime = new Date()
 

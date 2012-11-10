@@ -95,6 +95,7 @@ ame.ns 'ame.aisle', (ns) ->
 		switch tileType
 			when tileTypes.empty then ame.gfx.colors.GREY
 			when tileTypes.wall then ame.gfx.colors.BLACK
+			when tileTypes.any then ame.gfx.colors.PURPLE
 
 	drawTile = (gfx, tile, camera={x:0}) ->
 		tileWidth = gfx.height / aisleHeight
@@ -102,3 +103,24 @@ ame.ns 'ame.aisle', (ns) ->
 			tile.y * tileWidth,
 			tileWidth,
 			tileWidth, tileColor(tile.type)
+
+	class ns.Editor
+		constructor: ->
+			patternData = defaultPatternData()
+			@matchTiles = []
+			for x in [0...patternData.matchTiles.length]
+				@matchTiles.push []
+				for y in [0...patternData.matchTiles[x].length]
+					@matchTiles[x].push {x: x, y: y, type: patternData.matchTiles[x][y]}
+
+			@resultTiles = []
+			for y in [0...patternData.resultTiles.length]
+				x = @matchTiles.length
+				@resultTiles.push {x: x, y: y, type: patternData.resultTiles[y]}
+
+		update: (delta) ->
+
+
+		draw: (gfx) ->
+			drawTile gfx, tile for tile in column for column in @matchTiles
+			drawTile gfx, tile for tile in @resultTiles

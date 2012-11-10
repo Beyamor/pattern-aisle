@@ -8,6 +8,7 @@ ame.ns 'ame.gfx', (ns) ->
 		GREEN:	'#52D017'
 		PINK:	'pink'
 		GREY:	'#736F6E'
+		PURPLE: '#8D38C9'
 
 	ns.colors = colors
 
