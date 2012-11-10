@@ -34,6 +34,7 @@ ame.ns 'ame.aisle', (ns) ->
 
 	pattern = new ns.Pattern
 	pattern.resultTiles = ((if i is aisleHeight-1 or i is aisleHeight-3 then tileTypes.wall else tileTypes.empty) for i in [0...aisleHeight])
+	pattern.matchTiles[1][aisleHeight-3] = tileTypes.empty
 	patterns.push pattern
 
 	class ns.Aisle
