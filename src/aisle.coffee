@@ -41,24 +41,6 @@ ame.ns 'ame.aisle', (ns) ->
 	regularFloorPattern.resultTiles = ((if i < aisleHeight-1 then tileTypes.empty else tileTypes.wall) for i in [0...aisleHeight])
 	patterns.push regularFloorPattern
 
-	pattern = new ns.Pattern
-	pattern.resultTiles = ((if i is aisleHeight-1 or i is aisleHeight-3 then tileTypes.wall else tileTypes.empty) for i in [0...aisleHeight])
-	pattern.matchTiles[1][aisleHeight-3] = tileTypes.empty
-	patterns.push pattern
-
-	pattern = new ns.Pattern
-	pattern.resultTiles = ((if i is aisleHeight-1 or i is aisleHeight-2 then tileTypes.wall else tileTypes.empty) for i in [0...aisleHeight])
-	pattern.matchTiles[2][aisleHeight-2] = tileTypes.empty
-	pattern.matchTiles[2][aisleHeight-3] = tileTypes.empty
-	patterns.push pattern
-
-	pattern = new ns.Pattern
-	pattern.resultTiles = ((if i is aisleHeight-1 or i is aisleHeight-2 or i is aisleHeight-3 or i is aisleHeight-4 then tileTypes.wall else tileTypes.empty) for i in [0...aisleHeight])
-	pattern.matchTiles[2][aisleHeight-2] = tileTypes.empty
-	pattern.matchTiles[1][aisleHeight-3] = tileTypes.wall
-	pattern.matchTiles[2][aisleHeight-4] = tileTypes.empty
-	patterns.push pattern
-
 	class ns.Aisle
 		constructor: ->
 			@tiles = []
@@ -113,6 +95,8 @@ ame.ns 'ame.aisle', (ns) ->
 	class ns.Editor
 		constructor: ($canvas) ->
 			$canvas.click @click
+			$canvas.keypress (e) =>
+				@showStuff() if e.keyCode is 32
 
 			patternData = defaultPatternData()
 			@matchTiles = []
@@ -142,6 +126,11 @@ ame.ns 'ame.aisle', (ns) ->
 
 		update: (delta) ->
 
+		showStuff: ->
+			output =
+				matchTiles: @matchTiles
+				resultTiles: @resultTiles
+			console.log JSON.stringify output
 
 		draw: (gfx) ->
 			drawTile gfx, tile for tile in column for column in @matchTiles

@@ -24,6 +24,9 @@ ame.ns 'ame.input', (ns) ->
 	defineVk 39, 'right'
 	defineVk 40, 'down'
 
+	# space
+	defineVk 32, 'space'
+
 	ns.focusOnEl = (el) ->
 		window.addEventListener 'keydown', (e) ->
 			keystate[e.keyCode] = 'down'
