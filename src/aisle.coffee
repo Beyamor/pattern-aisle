@@ -4,7 +4,7 @@ ame.ns 'ame.aisle', (ns) ->
 		empty: 'empty'
 		wall: 'wall'
 
-	aisleHeight = 5
+	aisleHeight = 7
 	
 	patternWidth = 3
 	patternHeight = aisleHeight
@@ -35,7 +35,7 @@ ame.ns 'ame.aisle', (ns) ->
 				@drawTile gfx, tile for tile in column
 
 		drawTile: (gfx, tile) ->
-			tileWidth = 48
+			tileWidth = gfx.height / aisleHeight
 			gfx.drawRectangle tile.x * tileWidth,
 				tile.y * tileWidth,
 				tileWidth,
