@@ -22,23 +22,19 @@ $ ->
 
 	gfx = new ame.gfx.GraphicsContext $canvas[0]
 
-	x = 0
-	y = 0
-
 	currentTime = new Date()
 	previousTime = currentTime
+
+	aisle = new ame.aisle.Aisle
 
 	setInterval ->
 		currentTime = new Date()
 		delta = (currentTime - previousTime) * 0.001
 
-		gfx.clear()
-		gfx.drawCircle x, y, 24
+		aisle.update delta
 
-		x -= 5 if input.isDown 'left'
-		x += 5 if input.isDown 'right'
-		y -= 5 if input.isDown 'up'
-		y += 5 if input.isDown 'down'
+		gfx.clear()
+		aisle.draw gfx
 
 		previousTime = new Date()
 
