@@ -3,6 +3,7 @@ ame.ns 'ame.aisle', (ns) ->
 		any: 'any'
 		empty: 'empty'
 		wall: 'wall'
+	tileTypeList = (type for typeName, type of tileTypes)
 
 	typeMatches = (type, tileInQuestion) ->
 		return true if type is tileTypes.any
@@ -12,6 +13,7 @@ ame.ns 'ame.aisle', (ns) ->
 	
 	patternWidth = 3
 	patternHeight = aisleHeight
+	tileWidth = 400 / aisleHeight # ah w/e give 'er
 
 	defaultPatternData = ->
 		matchTiles = []
@@ -98,14 +100,20 @@ ame.ns 'ame.aisle', (ns) ->
 			when tileTypes.any then ame.gfx.colors.PURPLE
 
 	drawTile = (gfx, tile, camera={x:0}) ->
-		tileWidth = gfx.height / aisleHeight
 		gfx.drawRectangle tile.x * tileWidth - camera.x,
 			tile.y * tileWidth,
 			tileWidth,
 			tileWidth, tileColor(tile.type)
 
+	cycleTileType = (tile) ->
+		indexOfCurrentType = tileTypeList.indexOf tile.type
+		indexOfNextType = (indexOfCurrentType + 1) % tileTypeList.length
+		tile.type = tileTypeList[indexOfNextType]
+
 	class ns.Editor
-		constructor: ->
+		constructor: ($canvas) ->
+			$canvas.click @click
+
 			patternData = defaultPatternData()
 			@matchTiles = []
 			for x in [0...patternData.matchTiles.length]
@@ -117,6 +125,20 @@ ame.ns 'ame.aisle', (ns) ->
 			for y in [0...patternData.resultTiles.length]
 				x = @matchTiles.length
 				@resultTiles.push {x: x, y: y, type: patternData.resultTiles[y]}
+
+		click: (e) =>
+			tileX = Math.floor e.offsetX/tileWidth
+			tileY = Math.floor e.offsetY/tileWidth
+
+			tile = null
+			if tileX < @matchTiles.length
+				tile = @matchTiles[tileX][tileY]
+			else if tileX is @matchTiles.length
+				tile = @resultTiles[tileY]
+
+			return if tile is null
+
+			cycleTileType tile
 
 		update: (delta) ->
 

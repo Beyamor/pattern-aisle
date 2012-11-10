@@ -26,7 +26,7 @@ $ ->
 	previousTime = currentTime
 
 	aThing = new ame.aisle.Aisle
-	aThing = new ame.aisle.Editor
+	aThing = new ame.aisle.Editor $canvas
 
 	setInterval ->
 		currentTime = new Date()
