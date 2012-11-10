@@ -4,6 +4,10 @@ ame.ns 'ame.aisle', (ns) ->
 		empty: 'empty'
 		wall: 'wall'
 
+	typeMatches: (type, tileInQuestion) ->
+		return true if type is tileTypes.any
+		return type is tileInQuestion
+
 	aisleHeight = 7
 	
 	patternWidth = 3
@@ -15,11 +19,22 @@ ame.ns 'ame.aisle', (ns) ->
 				@matchTiles.push []
 				for y in [0...patternHeight]
 					@matchTiles[x].push tileTypes.empty
+			@resultTiles = (tileTypes.empty for i in [0...aisleHeight])
+
+		matches: (tileSet) ->
+			for x in [0...patternWidth]
+				for y in [0...patternHeight]
+					return false if typeMatches tileSet[x][y].type, @matchTiles[x][y]
+			return true
+	patterns = []
+	regularFloorPattern = new ns.Pattern
+	regularFloorPattern.resultTiles = ((if i < aisleHeight-1 then tileTypes.empty else tileTypes.wall) for i in [0...aisleHeight])
+
 	class ns.Aisle
 		constructor: ->
 			@tiles = []
-
-			@addColumn ((if i < aisleHeight-1 then tileTypes.empty else tileTypes.wall) for i in [0...aisleHeight])
+			for i in [0...3]
+				@addColumn regularFloorPattern.resultTiles
 
 		addColumn: (tileTypes) ->
 			column = []
