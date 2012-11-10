@@ -12,14 +12,21 @@ ame.ns 'ame.aisle', (ns) ->
 	
 	patternWidth = 3
 	patternHeight = aisleHeight
+
+	defaultPatternData = ->
+		matchTiles = []
+		for x in [0...patternWidth]
+			matchTiles.push []
+			for y in [0...patternHeight]
+				matchTiles[x].push tileTypes.any
+		resultTiles = (tileTypes.empty for i in [0...aisleHeight])
+		return {matchTiles: matchTiles, resultTiles: resultTiles}
+
 	class ns.Pattern
-		constructor: ->
-			@matchTiles = []
-			for x in [0...patternWidth]
-				@matchTiles.push []
-				for y in [0...patternHeight]
-					@matchTiles[x].push tileTypes.any
-			@resultTiles = (tileTypes.empty for i in [0...aisleHeight])
+		constructor: (patternData=null) ->
+			patternData = defaultPatternData() if patternData is null
+			@matchTiles = patternData.matchTiles
+			@resultTiles = patternData.resultTiles
 
 		matches: (tileSet) ->
 			for x in [0...patternWidth]
