@@ -50,14 +50,23 @@ ame.ns 'ame.aisle', (ns) ->
 	pattern.matchTiles[2][aisleHeight-3] = tileTypes.empty
 	patterns.push pattern
 
+	pattern = new ns.Pattern
+	pattern.resultTiles = ((if i is aisleHeight-1 or i is aisleHeight-2 or i is aisleHeight-3 or i is aisleHeight-4 then tileTypes.wall else tileTypes.empty) for i in [0...aisleHeight])
+	pattern.matchTiles[2][aisleHeight-2] = tileTypes.empty
+	pattern.matchTiles[1][aisleHeight-3] = tileTypes.wall
+	pattern.matchTiles[2][aisleHeight-4] = tileTypes.empty
+	patterns.push pattern
+
 	class ns.Aisle
 		constructor: ->
 			@tiles = []
 			for i in [0...3]
 				@addColumn regularFloorPattern.resultTiles
 
-			for i in [0...10]
+			for i in [0...100]
 				@addNextColumn()
+
+			@camera = {x:0}
 
 		addNextColumn: ->
 			columnsToMatch = []
@@ -75,19 +84,21 @@ ame.ns 'ame.aisle', (ns) ->
 			@tiles.push column
 
 		update: (delta) ->
+			@camera.x += 5 if ame.input.isDown 'right'
+			@camera.x -= 5 if ame.input.isDown 'left'
 
 		draw: (gfx) ->
 			for column in @tiles
-				drawTile gfx, tile for tile in column
+				drawTile gfx, tile, @camera for tile in column
 
 	tileColor = (tileType) ->
 		switch tileType
 			when tileTypes.empty then ame.gfx.colors.GREY
 			when tileTypes.wall then ame.gfx.colors.BLACK
 
-	drawTile = (gfx, tile) ->
+	drawTile = (gfx, tile, camera={x:0}) ->
 		tileWidth = gfx.height / aisleHeight
-		gfx.drawRectangle tile.x * tileWidth,
+		gfx.drawRectangle tile.x * tileWidth - camera.x,
 			tile.y * tileWidth,
 			tileWidth,
 			tileWidth, tileColor(tile.type)
