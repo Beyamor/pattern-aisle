@@ -78,16 +78,16 @@ ame.ns 'ame.aisle', (ns) ->
 
 		draw: (gfx) ->
 			for column in @tiles
-				@drawTile gfx, tile for tile in column
+				drawTile gfx, tile for tile in column
 
-		drawTile: (gfx, tile) ->
-			tileWidth = gfx.height / aisleHeight
-			gfx.drawRectangle tile.x * tileWidth,
-				tile.y * tileWidth,
-				tileWidth,
-				tileWidth, @tileColor(tile.type)
+	tileColor = (tileType) ->
+		switch tileType
+			when tileTypes.empty then ame.gfx.colors.GREY
+			when tileTypes.wall then ame.gfx.colors.BLACK
 
-		tileColor: (tileType) ->
-			switch tileType
-				when tileTypes.empty then ame.gfx.colors.GREY
-				when tileTypes.wall then ame.gfx.colors.BLACK
+	drawTile = (gfx, tile) ->
+		tileWidth = gfx.height / aisleHeight
+		gfx.drawRectangle tile.x * tileWidth,
+			tile.y * tileWidth,
+			tileWidth,
+			tileWidth, tileColor(tile.type)
