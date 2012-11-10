@@ -20,8 +20,8 @@ ame.ns 'ame.aisle', (ns) ->
 		for x in [0...patternWidth]
 			matchTiles.push []
 			for y in [0...patternHeight]
-				matchTiles[x].push tileTypes.any
-		resultTiles = (tileTypes.empty for i in [0...aisleHeight])
+				matchTiles[x].push {x: x, y: y, type: tileTypes.any}
+		resultTiles = ({x: patternWidth, y: y, type: tileTypes.empty} for y in [0...aisleHeight])
 		return {matchTiles: matchTiles, resultTiles: resultTiles}
 
 	class ns.Pattern
@@ -33,13 +33,23 @@ ame.ns 'ame.aisle', (ns) ->
 		matches: (tileSet) ->
 			for x in [0...patternWidth]
 				for y in [0...patternHeight]
-					return false unless typeMatches @matchTiles[x][y], tileSet[x][y].type
+					return false unless typeMatches @matchTiles[x][y].type, tileSet[x][y].type
 			return true
+
 	patterns = []
 
 	regularFloorPattern = new ns.Pattern
-	regularFloorPattern.resultTiles = ((if i < aisleHeight-1 then tileTypes.empty else tileTypes.wall) for i in [0...aisleHeight])
+	regularFloorPattern.resultTiles[y].type = (if y < aisleHeight-1 then tileTypes.empty else tileTypes.wall) for y in [0...aisleHeight]
 	patterns.push regularFloorPattern
+
+	addPattern = (data) ->
+		patterns.push new ns.Pattern data
+
+	addPattern {"matchTiles":[[{"x":0,"y":0,"type":"any"},{"x":0,"y":1,"type":"any"},{"x":0,"y":2,"type":"any"},{"x":0,"y":3,"type":"any"},{"x":0,"y":4,"type":"any"},{"x":0,"y":5,"type":"any"},{"x":0,"y":6,"type":"wall"}],[{"x":1,"y":0,"type":"any"},{"x":1,"y":1,"type":"any"},{"x":1,"y":2,"type":"any"},{"x":1,"y":3,"type":"any"},{"x":1,"y":4,"type":"empty"},{"x":1,"y":5,"type":"any"},{"x":1,"y":6,"type":"wall"}],[{"x":2,"y":0,"type":"any"},{"x":2,"y":1,"type":"any"},{"x":2,"y":2,"type":"any"},{"x":2,"y":3,"type":"any"},{"x":2,"y":4,"type":"any"},{"x":2,"y":5,"type":"empty"},{"x":2,"y":6,"type":"wall"}]],"resultTiles":[{"x":3,"y":0,"type":"empty"},{"x":3,"y":1,"type":"empty"},{"x":3,"y":2,"type":"empty"},{"x":3,"y":3,"type":"empty"},{"x":3,"y":4,"type":"wall"},{"x":3,"y":5,"type":"empty"},{"x":3,"y":6,"type":"wall"}]}
+
+	addPattern {"matchTiles":[[{"x":0,"y":0,"type":"any"},{"x":0,"y":1,"type":"any"},{"x":0,"y":2,"type":"any"},{"x":0,"y":3,"type":"any"},{"x":0,"y":4,"type":"any"},{"x":0,"y":5,"type":"any"},{"x":0,"y":6,"type":"wall"}],[{"x":1,"y":0,"type":"any"},{"x":1,"y":1,"type":"any"},{"x":1,"y":2,"type":"any"},{"x":1,"y":3,"type":"any"},{"x":1,"y":4,"type":"wall"},{"x":1,"y":5,"type":"any"},{"x":1,"y":6,"type":"wall"}],[{"x":2,"y":0,"type":"any"},{"x":2,"y":1,"type":"any"},{"x":2,"y":2,"type":"any"},{"x":2,"y":3,"type":"any"},{"x":2,"y":4,"type":"any"},{"x":2,"y":5,"type":"any"},{"x":2,"y":6,"type":"wall"}]],"resultTiles":[{"x":3,"y":0,"type":"empty"},{"x":3,"y":1,"type":"empty"},{"x":3,"y":2,"type":"empty"},{"x":3,"y":3,"type":"wall"},{"x":3,"y":4,"type":"wall"},{"x":3,"y":5,"type":"wall"},{"x":3,"y":6,"type":"wall"}]}
+
+	addPattern {"matchTiles":[[{"x":0,"y":0,"type":"any"},{"x":0,"y":1,"type":"any"},{"x":0,"y":2,"type":"any"},{"x":0,"y":3,"type":"any"},{"x":0,"y":4,"type":"any"},{"x":0,"y":5,"type":"any"},{"x":0,"y":6,"type":"wall"}],[{"x":1,"y":0,"type":"any"},{"x":1,"y":1,"type":"any"},{"x":1,"y":2,"type":"any"},{"x":1,"y":3,"type":"any"},{"x":1,"y":4,"type":"any"},{"x":1,"y":5,"type":"any"},{"x":1,"y":6,"type":"wall"}],[{"x":2,"y":0,"type":"any"},{"x":2,"y":1,"type":"any"},{"x":2,"y":2,"type":"any"},{"x":2,"y":3,"type":"any"},{"x":2,"y":4,"type":"any"},{"x":2,"y":5,"type":"any"},{"x":2,"y":6,"type":"wall"}]],"resultTiles":[{"x":3,"y":0,"type":"empty"},{"x":3,"y":1,"type":"empty"},{"x":3,"y":2,"type":"empty"},{"x":3,"y":3,"type":"empty"},{"x":3,"y":4,"type":"empty"},{"x":3,"y":5,"type":"wall"},{"x":3,"y":6,"type":"wall"}]}
 
 	class ns.Aisle
 		constructor: ->
@@ -60,11 +70,11 @@ ame.ns 'ame.aisle', (ns) ->
 			aMatchingPattern = matchingPatterns[Math.floor(Math.random() * matchingPatterns.length)]
 			@addColumn aMatchingPattern.resultTiles
 
-		addColumn: (tileTypes) ->
+		addColumn: (tiles) ->
 			column = []
 			x = @tiles.length
 			for y in [0...aisleHeight]
-				column.push {x:x, y:y, type:tileTypes[y]}
+				column.push {x:x, y:y, type:tiles[y].type}
 			@tiles.push column
 
 		update: (delta) ->
@@ -103,12 +113,12 @@ ame.ns 'ame.aisle', (ns) ->
 			for x in [0...patternData.matchTiles.length]
 				@matchTiles.push []
 				for y in [0...patternData.matchTiles[x].length]
-					@matchTiles[x].push {x: x, y: y, type: patternData.matchTiles[x][y]}
+					@matchTiles[x].push patternData.matchTiles[x][y]
 
 			@resultTiles = []
 			for y in [0...patternData.resultTiles.length]
 				x = @matchTiles.length
-				@resultTiles.push {x: x, y: y, type: patternData.resultTiles[y]}
+				@resultTiles.push patternData.resultTiles[x][y]
 
 		click: (e) =>
 			tileX = Math.floor e.offsetX/tileWidth
