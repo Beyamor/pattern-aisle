@@ -130,7 +130,7 @@ ame.ns 'ame.aisle', (ns) ->
 			for y in [0...patternData.resultTiles.length]
 				x = @matchTiles.length
 				@resultTiles.push patternData.resultTiles[y]
-				@resultTiles[y].x = @matchTiles.length + 2
+				@resultTiles[y].x = @matchTiles.length
 
 		click: (e) =>
 			tileX = Math.floor e.offsetX/tileWidth
@@ -138,7 +138,7 @@ ame.ns 'ame.aisle', (ns) ->
 
 			if tileX < @matchTiles.length
 				cycleTileType @matchTiles[tileX][tileY]
-			else if tileX is @matchTiles.length + 2 # hey this magic number is the same as that other one
+			else if tileX is @matchTiles.length
 				cycleValidLevelTileType @resultTiles[tileY]
 
 		update: (delta) ->
