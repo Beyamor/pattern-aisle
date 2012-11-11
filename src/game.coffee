@@ -15,10 +15,8 @@ $ ->
 			return false
 
 	input.focusOnEl $canvas[0]
-	input.define 'left', 'vk_a'
-	input.define 'right', 'vk_d'
-	input.define 'up', 'vk_w'
-	input.define 'down', 'vk_s'
+	input.define 'left', 'vk_a', 'vk_left'
+	input.define 'right', 'vk_d', 'vk_right'
 
 	gfx = new ame.gfx.GraphicsContext $canvas[0]
 
