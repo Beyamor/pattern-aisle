@@ -106,6 +106,13 @@ ame.ns 'ame.aisle', (ns) ->
 		indexOfNextType = (indexOfCurrentType + 1) % tileTypeList.length
 		tile.type = tileTypeList[indexOfNextType]
 
+	isValidLevelTileType = (type) ->
+		type != tileTypes.any
+
+	cycleValidLevelTileType = (tile) ->
+		cycleTileType tile
+		cycleTileType tile while not isValidLevelTileType tile.type
+
 	class ns.Editor
 		constructor: ($canvas) ->
 			$canvas.click @click
@@ -123,20 +130,16 @@ ame.ns 'ame.aisle', (ns) ->
 			for y in [0...patternData.resultTiles.length]
 				x = @matchTiles.length
 				@resultTiles.push patternData.resultTiles[y]
+				@resultTiles[y].x = @matchTiles.length + 2
 
 		click: (e) =>
 			tileX = Math.floor e.offsetX/tileWidth
 			tileY = Math.floor e.offsetY/tileWidth
 
-			tile = null
 			if tileX < @matchTiles.length
-				tile = @matchTiles[tileX][tileY]
-			else if tileX is @matchTiles.length
-				tile = @resultTiles[tileY]
-
-			return if tile is null
-
-			cycleTileType tile
+				cycleTileType @matchTiles[tileX][tileY]
+			else if tileX is @matchTiles.length + 2 # hey this magic number is the same as that other one
+				cycleValidLevelTileType @resultTiles[tileY]
 
 		update: (delta) ->
 
