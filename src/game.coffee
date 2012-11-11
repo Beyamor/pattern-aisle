@@ -25,6 +25,23 @@ $ ->
 
 	aThing = new ame.aisle.Aisle
 	#aThing = new ame.aisle.Editor $canvas
+	
+	$controlPanel = $('<div></div>')
+	$('body').append $controlPanel
+	$changeDeal = $('<button id="changeState"></button>')
+	$controlPanel.append $changeDeal
+	openEditor = (e) ->
+		$changeDeal.html 'Close editor'
+		$changeDeal.click closeEditor
+		$('#restartLevel', $controlPanel).remove()
+	closeEditor = (e) ->
+		$changeDeal.html 'Open editor'
+		$changeDeal.click openEditor
+		$restartLevel = $('<button id="restartLevel">Restart level</button>')
+		$controlPanel.append $restartLevel
+		$restartLevel.click (e) ->
+			aThing = new ame.aisle.Aisle
+	closeEditor()
 
 	setInterval ->
 		currentTime = new Date()
